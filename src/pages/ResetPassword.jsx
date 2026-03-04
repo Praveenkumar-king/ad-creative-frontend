@@ -1,60 +1,53 @@
+import { useParams } from "react-router-dom";
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../services/api";
 
-const API = import.meta.env.VITE_API_BASE;
+export default function ResetPassword(){
 
-export default function ResetPassword() {
   const { token } = useParams();
-  const navigate = useNavigate();
 
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [password,setPassword] = useState("");
 
-  const handleReset = async () => {
-    if (!password.trim()) return alert("Enter new password");
+  const reset = async ()=>{
 
-    try {
-      setLoading(true);
-      setMessage("");
+    try{
 
-      const res = await axios.post(
-        `${API}/auth/reset-password/${token}`,
-        { password }
-      );
+      await API.post(`/auth/reset-password/${token}`,{
+        password
+      });
 
-      setMessage(res.data.message);
+      alert("Password Reset Successful");
 
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
+    }catch(err){
 
-    } catch (err) {
-      setMessage(err.response?.data?.error || "Invalid or expired token");
-    } finally {
-      setLoading(false);
+      alert(err.response?.data?.error);
+
     }
+
   };
 
-  return (
-    <div className="authContainer">
-      <div className="glassCard">
+  return(
+
+    <div className="authPage">
+
+      <div className="authCard">
+
         <h2>Reset Password</h2>
 
         <input
           type="password"
-          placeholder="Enter new password"
-          value={password}
+          placeholder="New Password"
           onChange={(e)=>setPassword(e.target.value)}
         />
 
-        <button onClick={handleReset}>
-          {loading ? "Resetting..." : "Reset Password"}
+        <button onClick={reset}>
+          Reset Password
         </button>
 
-        {message && <p style={{ marginTop: "10px" }}>{message}</p>}
       </div>
+
     </div>
+
   );
+
 }

@@ -1,32 +1,40 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "./context/AuthContext";
+import { BrowserRouter,Routes,Route } from "react-router-dom";
+
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import VerifyEmail from "./pages/VerifyEmail";
+import VerifySuccess from "./pages/VerifySuccess";
+import Dashboard from "./pages/Dashboard";
+import History from "./pages/History";
+import Profile from "./pages/Profile";
 
-function ProtectedRoute({ children }) {
-  const { user } = useContext(AuthContext);
-  return user ? children : <Navigate to="/login" />;
-}
+export default function App(){
 
-export default function App() {
-  return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-<Route path="/reset-password/:token" element={<ResetPassword />} />
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
+  return(
+
+    <BrowserRouter>
+
+      <Routes>
+
+        <Route path="/" element={<Login/>}/>
+        <Route path="/signup" element={<Signup/>}/>
+
+        <Route path="/forgot-password" element={<ForgotPassword/>}/>
+        <Route path="/reset-password/:token" element={<ResetPassword/>}/>
+
+        <Route path="/verify/:token" element={<VerifyEmail/>}/>
+        <Route path="/verify-success" element={<VerifySuccess/>}/>
+
+        <Route path="/dashboard" element={<Dashboard/>}/>
+        <Route path="/history" element={<History/>}/>
+        <Route path="/profile" element={<Profile/>}/>
+
+      </Routes>
+
+    </BrowserRouter>
+
   );
+
 }

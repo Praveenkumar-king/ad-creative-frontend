@@ -1,36 +1,77 @@
-import { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
-import { AuthContext } from "../context/AuthContext";
-
-const API = "http://localhost:8080/api/auth";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import API from "../services/api";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { login } = useContext(AuthContext);
+
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    try {
-      const res = await axios.post(`${API}/login`, { email, password });
-      login(res.data);
-      navigate("/");
-    } catch {
-      alert("Invalid credentials");
+  const [email,setEmail] = useState("");
+  const [password,setPassword] = useState("");
+
+  const login = async () => {
+
+    try{
+
+      const res = await API.post("/auth/login",{
+        email,
+        password
+      });
+
+      localStorage.setItem("token",res.data.token);
+      localStorage.setItem("name",res.data.name);
+
+      navigate("/dashboard");
+
+    }catch(err){
+
+      alert(err.response?.data?.error || "Login Failed");
+
     }
+
   };
 
-  return (
-    <div className="authContainer">
-      <div className="glassCard">
-        <h2>Login</h2>
-        <input placeholder="Email" onChange={e=>setEmail(e.target.value)} />
-        <input type="password" placeholder="Password" onChange={e=>setPassword(e.target.value)} />
-        <Link to="/forgot-password">Forgot Password?</Link>
-        <button onClick={handleLogin}>Login</button>
-        <p>Don't have account? <Link to="/signup">Signup</Link></p>
+  return(
+
+    <div className="authPage">
+
+      <div className="leftHero">
+        <h1>AdVantage Gen</h1>
+        <p>AI-powered ad creative intelligence</p>
       </div>
+
+      <div className="authCard">
+
+        <h2>Sign in</h2>
+
+        <input
+          placeholder="Email"
+          onChange={(e)=>setEmail(e.target.value)}
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          onChange={(e)=>setPassword(e.target.value)}
+        />
+
+        <button onClick={login}>Continue</button>
+
+        <p
+          className="link"
+          onClick={()=>navigate("/forgot-password")}
+        >
+          Forgot Password?
+        </p>
+
+        <p>
+          New user? <span onClick={()=>navigate("/signup")}>Create account</span>
+        </p>
+
+      </div>
+
     </div>
+
   );
+
 }

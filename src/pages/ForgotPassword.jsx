@@ -1,49 +1,46 @@
 import { useState } from "react";
-import axios from "axios";
+import API from "../services/api";
 
-const API = import.meta.env.VITE_API_BASE;
+export default function ForgotPassword(){
 
-export default function ForgotPassword() {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [email,setEmail] = useState("");
 
-  const handleSubmit = async () => {
-    if (!email.trim()) return alert("Enter email");
+  const send = async ()=>{
 
-    try {
-      setLoading(true);
-      setMessage("");
+    try{
 
-      const res = await axios.post(`${API}/auth/forgot-password`, { email });
+      await API.post("/auth/forgot-password",{email});
+      alert("Reset email sent");
 
-      setMessage(res.data.message || "Reset email sent successfully");
+    }catch(err){
 
-    } catch (err) {
-      setMessage(err.response?.data?.error || "Something went wrong");
-    } finally {
-      setLoading(false);
+      alert(err.response?.data?.error);
+
     }
+
   };
 
-  return (
-    <div className="authContainer">
-      <div className="glassCard">
+  return(
+
+    <div className="authPage">
+
+      <div className="authCard">
+
         <h2>Forgot Password</h2>
 
         <input
-          type="email"
-          placeholder="Enter your registered email"
-          value={email}
+          placeholder="Email"
           onChange={(e)=>setEmail(e.target.value)}
         />
 
-        <button onClick={handleSubmit}>
-          {loading ? "Sending..." : "Send Reset Link"}
+        <button onClick={send}>
+          Send Reset Link
         </button>
 
-        {message && <p style={{ marginTop: "10px" }}>{message}</p>}
       </div>
+
     </div>
+
   );
+
 }
