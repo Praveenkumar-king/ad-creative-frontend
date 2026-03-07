@@ -1,0 +1,118 @@
+/* FULL PAGE LAYOUT */
+
+.authPage{
+  display:flex;
+  height:100vh;
+  width:100%;
+  font-family: "Segoe UI", sans-serif;
+}
+
+
+/* LEFT SIDE HERO */
+
+.leftHero{
+  width:50%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+
+  background: linear-gradient(135deg,#6366f1,#06b6d4);
+  color:white;
+  text-align:center;
+}
+
+.leftHero h1{
+  font-size:48px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.leftHero p{
+  opacity:0.9;
+  font-size:16px;
+}
+
+
+/* RIGHT SIDE */
+
+.authCard{
+  width:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  background:#020617;
+}
+
+
+/* CARD BOX */
+
+.authCard > div{
+  width:380px;
+  padding:40px;
+  border-radius:12px;
+
+  background:#0f172a;
+  border:1px solid #1e293b;
+
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+.authCard h2{
+  margin-bottom:20px;
+  color:white;
+}
+
+
+/* INPUTS */
+
+.authCard input{
+  width:100%;
+  padding:12px;
+  margin-bottom:14px;
+
+  border-radius:6px;
+  border:none;
+
+  background:#1e293b;
+  color:white;
+}
+
+.authCard input:focus{
+  outline:none;
+  border:1px solid #6366f1;
+}
+
+
+/* BUTTON */
+
+.authCard button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:6px;
+
+  background:linear-gradient(90deg,#6366f1,#06b6d4);
+  color:white;
+
+  cursor:pointer;
+  font-weight:600;
+}
+
+.authCard button:hover{
+  opacity:0.9;
+}
+
+
+/* TEXT */
+
+.switchText{
+  margin-top:15px;
+  color:#94a3b8;
+}
+
+.switchText a{
+  color:#60a5fa;
+  text-decoration:none;
+}

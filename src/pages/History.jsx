@@ -1,70 +1,40 @@
-import { useEffect, useState } from "react";
-import API from "../services/api";
+import Sidebar from "../components/Sidebar";
+import "../styles/dashboard.css";
+import "../styles/history.css";
 
-export default function History() {
+export default function History(){
 
-  const [campaigns,setCampaigns] = useState([]);
-
-  useEffect(()=>{
-
-    const loadHistory = async ()=>{
-
-      try{
-
-        const res = await API.get("/generate/history");
-        setCampaigns(res.data);
-
-      }catch(err){
-
-        console.log(err);
-
-      }
-
-    };
-
-    loadHistory();
-
-  },[]);
+  const demoHistory = [
+    { prompt:"Coffee ad creative", date:"2026-03-04" },
+    { prompt:"Nike shoe campaign", date:"2026-03-03" },
+    { prompt:"Mobile phone ad", date:"2026-03-02" }
+  ];
 
   return(
 
-    <div className="pageContainer">
+    <div className="dashboard">
 
-      <h2>Campaign History</h2>
+      <Sidebar/>
 
-      <div className="historyGrid">
+      <div className="content">
 
-        {campaigns.map((item)=>{
+        <h1>Ad History</h1>
 
-          return(
+        <div className="historyList">
 
-            <div className="historyCard" key={item._id}>
+          {demoHistory.map((item,i)=>(
 
-              <img
-                src={`http://localhost:8080${item.imageUrl}`}
-                alt="poster"
-              />
+            <div key={i} className="historyCard">
 
-              <p className="prompt">
-                {item.prompt}
-              </p>
+              <h3>{item.prompt}</h3>
 
-              <p className="caption">
-                {item.caption}
-              </p>
-
-              <a
-                href={`http://localhost:8080/api/generate/download/${item.imageUrl.split("/").pop()}`}
-                target="_blank"
-              >
-                Download
-              </a>
+              <p>{item.date}</p>
 
             </div>
 
-          );
+          ))}
 
-        })}
+        </div>
 
       </div>
 

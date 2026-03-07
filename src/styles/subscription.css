@@ -1,0 +1,79 @@
+.planTitle{
+
+font-size:32px;
+
+margin-bottom:30px;
+
+}
+
+.plansGrid{
+
+display:flex;
+
+gap:25px;
+
+}
+
+.planCard{
+
+flex:1;
+
+background:#0f172a;
+
+color:white;
+
+padding:30px;
+
+border-radius:12px;
+
+text-align:center;
+
+}
+
+.planCard h3{
+
+font-size:32px;
+
+margin:15px 0;
+
+}
+
+.planCard ul{
+
+list-style:none;
+
+padding:0;
+
+margin:20px 0;
+
+}
+
+.planCard ul li{
+
+margin:8px 0;
+
+}
+
+.planCard button{
+
+margin-top:20px;
+
+padding:12px 20px;
+
+border:none;
+
+background:linear-gradient(90deg,#6366f1,#06b6d4);
+
+color:white;
+
+border-radius:8px;
+
+cursor:pointer;
+
+}
+
+.popular{
+
+border:2px solid #06b6d4;
+
+}

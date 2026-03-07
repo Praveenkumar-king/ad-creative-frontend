@@ -1,14 +1,17 @@
-import { useParams } from "react-router-dom";
 import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import API from "../services/api";
+import "../styles/auth.css";
 
 export default function ResetPassword(){
 
   const { token } = useParams();
 
+  const navigate = useNavigate();
+
   const [password,setPassword] = useState("");
 
-  const reset = async ()=>{
+  const reset = async () => {
 
     try{
 
@@ -16,11 +19,13 @@ export default function ResetPassword(){
         password
       });
 
-      alert("Password Reset Successful");
+      alert("Password reset successful");
+
+      navigate("/login");
 
     }catch(err){
 
-      alert(err.response?.data?.error);
+      alert(err.response?.data?.error || "Reset failed");
 
     }
 
@@ -30,19 +35,34 @@ export default function ResetPassword(){
 
     <div className="authPage">
 
+      <div className="leftHero">
+
+        <h1>Reset Password</h1>
+
+        <p>
+          Enter your new password
+        </p>
+
+      </div>
+
+
       <div className="authCard">
 
-        <h2>Reset Password</h2>
+        <div>
 
-        <input
-          type="password"
-          placeholder="New Password"
-          onChange={(e)=>setPassword(e.target.value)}
-        />
+          <h2>Create New Password</h2>
 
-        <button onClick={reset}>
-          Reset Password
-        </button>
+          <input
+            type="password"
+            placeholder="New Password"
+            onChange={(e)=>setPassword(e.target.value)}
+          />
+
+          <button onClick={reset}>
+            Reset Password
+          </button>
+
+        </div>
 
       </div>
 

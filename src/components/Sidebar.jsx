@@ -1,18 +1,38 @@
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
+import "../styles/dashboard.css";
 
-export default function Sidebar({ active, setActive }) {
-  const { user, logout } = useContext(AuthContext);
+export default function Sidebar(){
 
-  return (
+  const navigate = useNavigate();
+
+  const logout = () => {
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("name");
+
+    navigate("/login");
+
+  };
+
+  return(
+
     <div className="sidebar">
-      <h3>AI Studio</h3>
-      <button onClick={()=>setActive("generate")}>Generate</button>
-      <button onClick={()=>setActive("history")}>History</button>
-      <div className="userBox">
-        <p>Welcome, {user?.name}</p>
-        <button onClick={logout}>Logout</button>
-      </div>
+
+      <h2 className="logo">AdVantage Gen</h2>
+      
+      <Link to="/generator">Ad Studio</Link>
+      <Link to="/dashboard">Dashboard</Link>
+      <Link to="/history">History</Link>
+      <Link to="/profile">Profile</Link>
+      <li onClick={()=>navigate("/gallery")}>Gallery</li>
+      <Link to="/activity">Security</Link>
+
+      <button className="logoutBtn" onClick={logout}>
+        Logout
+      </button>
+
     </div>
+
   );
+
 }

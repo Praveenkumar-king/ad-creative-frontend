@@ -1,176 +1,194 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
-import { AuthContext } from "../context/AuthContext";
+import "../styles/dashboard.css";
 
 const API_BASE = "http://localhost:8080/api";
 
 export default function Dashboard() {
-  const { user } = useContext(AuthContext);
 
-  const [active, setActive] = useState("generate");
-  const [prompt, setPrompt] = useState("");
-  const [size, setSize] = useState("instagram");
-  const [tone, setTone] = useState("professional");
-  const [logoFile, setLogoFile] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
-  const [history, setHistory] = useState([]);
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  const token = user?.token;
+  const [stats,setStats] = useState(null);
 
-  /* =========================
-     Fetch History From Backend
-  ========================= */
-  useEffect(() => {
-    if (active === "history") {
-      fetchHistory();
-    }
-  }, [active]);
+  useEffect(()=>{
+    fetchStats();
+  },[]);
 
-  const fetchHistory = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/generate/history`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      setHistory(res.data);
-    } catch {
-      alert("Failed to load history");
-    }
-  };
+  const fetchStats = async ()=>{
 
-  /* =========================
-     Generate Poster
-  ========================= */
-  const handleGenerate = async () => {
-    if (!prompt.trim()) return alert("Enter prompt");
+    try{
 
-    try {
-      setLoading(true);
-      setResult(null);
-
-      const formData = new FormData();
-      formData.append("prompt", prompt);
-      formData.append("size", size);
-      formData.append("tone", tone);
-      if (logoFile) formData.append("logo", logoFile);
-
-      const res = await axios.post(
-        `${API_BASE}/generate`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
+      const res = await axios.get(
+        `${API_BASE}/dashboard/stats`,
+        {withCredentials:true}
       );
 
-      setResult(res.data);
-      setActive("generate");
+      setStats(res.data);
 
-    } catch {
-      alert("Generation failed");
-    } finally {
-      setLoading(false);
+    }catch{
+
+      console.log("Stats load failed");
+
     }
+
   };
 
-  const handleDownload = () => {
-    const filename = result.imageUrl.split("/").pop();
-    window.open(`${API_BASE}/generate/download/${filename}`);
+  /* ======================
+     RAZORPAY BUY CREDITS
+  ====================== */
+
+  const buyCredits = async () => {
+
+    try{
+
+      const res = await axios.post(
+        `${API_BASE}/payment/create-order`,
+        {},
+        {withCredentials:true}
+      );
+
+      const options = {
+
+        key:"RAZORPAY_KEY",
+
+        amount:res.data.amount,
+
+        currency:"INR",
+
+        name:"AdVantage Gen",
+
+        description:"Buy AI Credits",
+
+        order_id:res.data.id,
+
+        handler:function(response){
+
+          alert("Payment Successful 🎉");
+
+          fetchStats();
+
+        },
+
+        theme:{
+          color:"#6366f1"
+        }
+
+      };
+
+      const rzp = new window.Razorpay(options);
+
+      rzp.open();
+
+    }catch(err){
+
+      alert("Payment failed");
+
+    }
+
   };
 
-  return (
+  if(!stats){
+    return <p style={{padding:"40px"}}>Loading dashboard...</p>;
+  }
+
+  return(
+
     <div className="dashboard">
 
-      <Sidebar active={active} setActive={setActive} />
+      <Sidebar/>
 
       <div className="content">
 
-        {/* WELCOME HEADER */}
+        {/* WELCOME */}
+
         <div className="topBar">
-          <h2>Welcome, {user?.name}</h2>
+
+          <h2>Welcome, {user?.name || "User"}</h2>
+
+          {/* NEW UPGRADE PLAN BUTTON */}
+
+          <button
+            onClick={()=>window.location.href="/subscription"}
+            className="buyCreditsBtn"
+          >
+            Upgrade Plan
+          </button>
+
         </div>
 
-        {/* GENERATE TAB */}
-        {active === "generate" && (
-          <div className="card">
 
-            <h1>AI Ad Creative Generator</h1>
+        {/* CREDITS BOX */}
 
-            <textarea
-              placeholder="Enter marketing prompt..."
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-            />
+        <div className="creditsBox">
 
-            <div className="controls">
+          <span>
+            Credits Left: <b>{stats.creditsLeft}</b>
+          </span>
 
-              <select value={size} onChange={(e)=>setSize(e.target.value)}>
-                <option value="instagram">Instagram</option>
-                <option value="story">Story</option>
-                <option value="a4">A4</option>
-              </select>
+          <button
+            className="buyCreditsBtn"
+            onClick={buyCredits}
+          >
+            Buy Credits
+          </button>
 
-              <select value={tone} onChange={(e)=>setTone(e.target.value)}>
-                <option value="professional">Professional</option>
-                <option value="witty">Witty</option>
-                <option value="urgent">Urgent</option>
-                <option value="inspirational">Inspirational</option>
-              </select>
+        </div>
 
-              <input
-                type="file"
-                accept="image/png,image/jpeg"
-                onChange={(e)=>setLogoFile(e.target.files[0])}
-              />
 
-              <button onClick={handleGenerate}>
-                {loading ? "Generating..." : "Generate"}
-              </button>
-            </div>
+        {/* PLAN EXPIRY COUNTDOWN */}
 
-            {loading && <div className="spinner"></div>}
+        {stats.planExpire && (
 
-            {result && (
-              <div className="result">
-                <img
-                  src={`http://localhost:8080${result.imageUrl}`}
-                  className="poster"
-                />
-                <div className="captionSection">
-                  <p>{result.caption}</p>
-                  <button onClick={handleDownload}>Download</button>
-                </div>
-              </div>
-            )}
+          <div className="planExpireBox">
+
+            Plan expires on: {new Date(stats.planExpire).toDateString()}
 
           </div>
+
         )}
 
-        {/* HISTORY TAB */}
-        {active === "history" && (
-          <div className="card">
-            <h2>Your Recent Campaigns</h2>
 
-            {history.map((item) => (
-              <div key={item._id} className="historyItem">
-                <img
-                  src={`http://localhost:8080${item.imageUrl}`}
-                />
-                <div>
-                  <strong>{item.prompt}</strong>
-                  <p>{item.caption}</p>
-                </div>
-              </div>
-            ))}
+        {/* STATS */}
 
+        <div className="statsGrid">
+
+          <div className="statCard">
+            <h3>{stats.adsGenerated}</h3>
+            <p>Ads Generated</p>
           </div>
-        )}
+
+          <div className="statCard">
+            <h3>{stats.creditsLeft}</h3>
+            <p>Credits Left</p>
+          </div>
+
+          <div className="statCard">
+            <h3>{stats.adsToday}</h3>
+            <p>Ads Today</p>
+          </div>
+
+          <div className="statCard">
+            <h3>{stats.adsMonth}</h3>
+            <p>This Month</p>
+          </div>
+
+          <div className="statCard">
+            <h3>{stats.mostUsedTone}</h3>
+            <p>Most Used Tone</p>
+          </div>
+
+          <div className="statCard">
+            <h3>{stats.mostUsedSize}</h3>
+            <p>Most Used Size</p>
+          </div>
+
+        </div>
 
       </div>
+
     </div>
+
   );
+
 }
