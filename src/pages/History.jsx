@@ -1,14 +1,91 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 import Sidebar from "../components/Sidebar";
+
 import "../styles/dashboard.css";
 import "../styles/history.css";
 
+const API = "http://localhost:8080/api";
+
 export default function History(){
 
-  const demoHistory = [
-    { prompt:"Coffee ad creative", date:"2026-03-04" },
-    { prompt:"Nike shoe campaign", date:"2026-03-03" },
-    { prompt:"Mobile phone ad", date:"2026-03-02" }
-  ];
+  const [history,setHistory] = useState([]);
+  const [loading,setLoading] = useState(true);
+
+  useEffect(()=>{
+
+    loadHistory();
+
+  },[]);
+
+
+  const loadHistory = async ()=>{
+
+    try{
+
+      const res = await axios.get(
+        `${API}/generate/history`,
+        {withCredentials:true}
+      );
+
+      setHistory(res.data);
+
+    }catch(err){
+
+      console.error(err);
+      alert("Failed to load history");
+
+    }finally{
+
+      setLoading(false);
+
+    }
+
+  };
+
+
+  const deleteCampaign = async (id)=>{
+
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this campaign?"
+    );
+
+    if(!confirmDelete) return;
+
+    try{
+
+      await axios.delete(
+        `${API}/generate/campaign/${id}`,
+        {withCredentials:true}
+      );
+
+      setHistory(
+        history.filter(item => item._id !== id)
+      );
+
+    }catch(err){
+
+      console.error(err);
+      alert("Delete failed");
+
+    }
+
+  };
+
+
+  if(loading){
+    return(
+      <div className="dashboard">
+        <Sidebar/>
+        <div className="content">
+          <h1>Ad History</h1>
+          <p>Loading history...</p>
+        </div>
+      </div>
+    );
+  }
+
 
   return(
 
@@ -20,21 +97,53 @@ export default function History(){
 
         <h1>Ad History</h1>
 
-        <div className="historyList">
+        {history.length === 0 ?(
 
-          {demoHistory.map((item,i)=>(
+          <p>No ads generated yet</p>
 
-            <div key={i} className="historyCard">
+        ):(
 
-              <h3>{item.prompt}</h3>
+          <div className="historyList">
 
-              <p>{item.date}</p>
+            {history.map((item)=>{
 
-            </div>
+              const date = new Date(item.createdAt)
+              .toLocaleDateString("en-CA");
 
-          ))}
+              return(
 
-        </div>
+                <div key={item._id} className="historyCard">
+
+                  {item.imageUrl && (
+
+                    <img
+                      src={item.imageUrl}
+                      alt="Ad"
+                      className="historyImage"
+                    />
+
+                  )}
+
+                  <h3>{item.prompt}</h3>
+
+                  <p>{date}</p>
+
+                  <button
+                    className="deleteBtn"
+                    onClick={()=>deleteCampaign(item._id)}
+                  >
+                    Delete Ad
+                  </button>
+
+                </div>
+
+              );
+
+            })}
+
+          </div>
+
+        )}
 
       </div>
 

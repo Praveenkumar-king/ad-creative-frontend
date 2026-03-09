@@ -286,3 +286,69 @@ color:#38bdf8;
 font-weight:600;
 
 }
+/* =========================
+   GREETING + CLOCK LINE
+========================= */
+.greetingLine{
+  margin-top:6px;
+  color:#ffffff;
+  font-size:14px;
+  opacity:0.9;
+}
+.dot{
+  margin:0 6px;
+  color:#ffffff;
+}
+
+/* =========================
+   WAVING HAND ANIMATION
+========================= */
+
+.wave{
+  display:inline-block;
+  animation:waveAnim 1.8s infinite;
+  transform-origin:70% 70%;
+}
+
+@keyframes waveAnim{
+  0%{transform:rotate(0deg);}
+  15%{transform:rotate(14deg);}
+  30%{transform:rotate(-8deg);}
+  40%{transform:rotate(14deg);}
+  50%{transform:rotate(-4deg);}
+  60%{transform:rotate(10deg);}
+  70%{transform:rotate(0deg);}
+  100%{transform:rotate(0deg);}
+}
+
+/* =========================
+   ANIMATED GRADIENT HEADER
+========================= */
+
+.greetingHeader{
+
+padding:25px;
+border-radius:12px;
+margin-bottom:25px;
+
+background:linear-gradient(
+270deg,
+#6366f1,
+#06b6d4,
+#0ea5e9,
+#6366f1
+);
+
+background-size:600% 600%;
+
+animation:gradientMove 10s ease infinite;
+
+}
+
+@keyframes gradientMove{
+
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+
+}

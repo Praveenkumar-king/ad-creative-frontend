@@ -10,9 +10,19 @@ export default function Dashboard() {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const [stats,setStats] = useState(null);
+  const [greeting,setGreeting] = useState("");
+  const [time,setTime] = useState("");
 
   useEffect(()=>{
+
     fetchStats();
+    setGreeting(getGreeting());
+    updateClock();
+
+    const timer = setInterval(updateClock,1000);
+
+    return ()=>clearInterval(timer);
+
   },[]);
 
   const fetchStats = async ()=>{
@@ -35,7 +45,41 @@ export default function Dashboard() {
   };
 
   /* ======================
-     RAZORPAY BUY CREDITS
+     GREETING
+  ====================== */
+
+  const getGreeting = ()=>{
+
+    const hour = new Date().getHours();
+
+    if(hour < 12) return "🌞 Good Morning";
+    if(hour < 17) return "🌞 Good Afternoon";
+    if(hour < 21) return "🌆 Good Evening";
+
+    return "🌙 Good Night";
+
+  };
+
+  /* ======================
+     LIVE CLOCK
+  ====================== */
+
+  const updateClock = ()=>{
+
+    const now = new Date();
+
+    const formattedTime = now.toLocaleTimeString("en-US",{
+      hour:"numeric",
+      minute:"2-digit",
+      hour12:true
+    });
+
+    setTime(formattedTime);
+
+  };
+
+  /* ======================
+     RAZORPAY
   ====================== */
 
   const buyCredits = async () => {
@@ -53,16 +97,14 @@ export default function Dashboard() {
         key:"RAZORPAY_KEY",
 
         amount:res.data.amount,
-
         currency:"INR",
 
         name:"AdVantage Gen",
-
         description:"Buy AI Credits",
 
         order_id:res.data.id,
 
-        handler:function(response){
+        handler:function(){
 
           alert("Payment Successful 🎉");
 
@@ -80,7 +122,7 @@ export default function Dashboard() {
 
       rzp.open();
 
-    }catch(err){
+    }catch{
 
       alert("Payment failed");
 
@@ -100,13 +142,25 @@ export default function Dashboard() {
 
       <div className="content">
 
-        {/* WELCOME */}
+        {/* GRADIENT HEADER */}
+
+        <div className="greetingHeader">
+
+          <h2>
+            Welcome, {user?.name || "User"}
+            <span className="wave"> 👋</span>
+          </h2>
+
+          <p className="greetingLine">
+            {greeting} <span className="dot">•</span> 🕒 {time}
+          </p>
+
+        </div>
+
+
+        {/* BUTTON BAR */}
 
         <div className="topBar">
-
-          <h2>Welcome, {user?.name || "User"}</h2>
-
-          {/* NEW UPGRADE PLAN BUTTON */}
 
           <button
             onClick={()=>window.location.href="/subscription"}
@@ -118,7 +172,7 @@ export default function Dashboard() {
         </div>
 
 
-        {/* CREDITS BOX */}
+        {/* CREDITS */}
 
         <div className="creditsBox">
 
@@ -136,7 +190,7 @@ export default function Dashboard() {
         </div>
 
 
-        {/* PLAN EXPIRY COUNTDOWN */}
+        {/* PLAN EXPIRY */}
 
         {stats.planExpire && (
 

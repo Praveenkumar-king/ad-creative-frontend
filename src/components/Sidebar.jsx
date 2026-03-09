@@ -24,7 +24,7 @@ export default function Sidebar(){
       <Link to="/dashboard">Dashboard</Link>
       <Link to="/history">History</Link>
       <Link to="/profile">Profile</Link>
-      <li onClick={()=>navigate("/gallery")}>Gallery</li>
+      <Link to="/gallery">Gallery</Link>
       <Link to="/activity">Security</Link>
 
       <button className="logoutBtn" onClick={logout}>
