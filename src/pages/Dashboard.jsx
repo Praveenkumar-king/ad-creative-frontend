@@ -78,58 +78,6 @@ export default function Dashboard() {
 
   };
 
-  /* ======================
-     RAZORPAY
-  ====================== */
-
-  const buyCredits = async () => {
-
-    try{
-
-      const res = await axios.post(
-        `${API_BASE}/payment/create-order`,
-        {},
-        {withCredentials:true}
-      );
-
-      const options = {
-
-        key:"RAZORPAY_KEY",
-
-        amount:res.data.amount,
-        currency:"INR",
-
-        name:"AdVantage Gen",
-        description:"Buy AI Credits",
-
-        order_id:res.data.id,
-
-        handler:function(){
-
-          alert("Payment Successful 🎉");
-
-          fetchStats();
-
-        },
-
-        theme:{
-          color:"#6366f1"
-        }
-
-      };
-
-      const rzp = new window.Razorpay(options);
-
-      rzp.open();
-
-    }catch{
-
-      alert("Payment failed");
-
-    }
-
-  };
-
   if(!stats){
     return <p style={{padding:"40px"}}>Loading dashboard...</p>;
   }
@@ -158,12 +106,12 @@ export default function Dashboard() {
         </div>
 
 
-        {/* BUTTON BAR */}
+        {/* TOP BUTTON */}
 
         <div className="topBar">
 
           <button
-            onClick={()=>window.location.href="/subscription"}
+            onClick={()=>alert("Subscription coming soon 🚀")}
             className="buyCreditsBtn"
           >
             Upgrade Plan
@@ -172,7 +120,7 @@ export default function Dashboard() {
         </div>
 
 
-        {/* CREDITS */}
+        {/* CREDITS BOX */}
 
         <div className="creditsBox">
 
@@ -182,7 +130,7 @@ export default function Dashboard() {
 
           <button
             className="buyCreditsBtn"
-            onClick={buyCredits}
+            onClick={()=>alert("Payment feature coming soon 🚀")}
           >
             Buy Credits
           </button>

@@ -52,7 +52,7 @@ return (
 <Route path="/admin" element={<Admin/>}/>
 <Route path="/admin-dashboard" element={<AdminDashboard/>}/>
 
-<Route path="/change-password" element={<ChangePassword/>}/>  {/* ⭐ ADD */}
+<Route path="/change-password" element={<ChangePassword/>}/>
 
 </Routes>
 
