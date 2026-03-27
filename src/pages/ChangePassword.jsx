@@ -1,8 +1,7 @@
 import { useState, useRef } from "react";
 import axios from "axios";
 import "../styles/changePassword.css";
-
-const API="http://localhost:8080/api/change-password";
+import API from "../config/api";
 
 export default function ChangePassword(){
 
@@ -41,15 +40,20 @@ return "medium";
 
 const sendOTP=async()=>{
 
+if(!oldPassword){
+alert("Enter old password");
+return;
+}
+
 try{
 
 await axios.post(
-`${API}/send-otp`,
+`${API}/change-password/send-otp`,
 {oldPassword},
 {withCredentials:true}
 );
 
-alert("OTP sent to email");
+alert("OTP sent to email✅.Please Check Spam/Jun Folder");
 
 startTimer();
 
@@ -128,7 +132,7 @@ try{
 setLoading(true);
 
 await axios.post(
-`${API}/verify-otp`,
+`${API}/change-password/verify-otp`,
 {
 otp:code,
 newPassword
@@ -199,6 +203,7 @@ return(
 <input
 type={showOld?"text":"password"}
 placeholder="Old Password"
+value={oldPassword}
 onChange={(e)=>setOldPassword(e.target.value)}
 />
 
@@ -216,6 +221,7 @@ onChange={(e)=>setOldPassword(e.target.value)}
 <input
 type={showNew?"text":"password"}
 placeholder="New Password"
+value={newPassword}
 onChange={(e)=>setNewPassword(e.target.value)}
 />
 
@@ -238,6 +244,7 @@ Password Strength: {getStrength()}
 <input
 type={showConfirm?"text":"password"}
 placeholder="Confirm Password"
+value={confirm}
 onChange={(e)=>setConfirm(e.target.value)}
 />
 

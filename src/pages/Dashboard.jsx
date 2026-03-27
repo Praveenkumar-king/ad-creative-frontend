@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import "../styles/dashboard.css";
+import API from "../config/api";
 
-const API_BASE = "http://localhost:8080/api";
 
 export default function Dashboard() {
 
@@ -30,7 +30,7 @@ export default function Dashboard() {
     try{
 
       const res = await axios.get(
-        `${API_BASE}/dashboard/stats`,
+        `${API}/dashboard/stats`,
         {withCredentials:true}
       );
 

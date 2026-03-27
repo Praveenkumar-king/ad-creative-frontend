@@ -6,7 +6,7 @@ import Sidebar from "../components/Sidebar";
 import "../styles/dashboard.css";
 import "../styles/history.css";
 
-const API = "http://localhost:8080/api";
+import API from "../config/api";
 
 export default function History(){
 

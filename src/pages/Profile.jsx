@@ -4,7 +4,7 @@ import Sidebar from "../components/Sidebar";
 import "../styles/dashboard.css";
 import "../styles/profile.css";
 
-const API_BASE = "http://localhost:8080/api";
+import API from "../config/api";
 
 export default function Profile(){
 
@@ -25,12 +25,12 @@ const loadData = async ()=>{
 try{
 
 const profileRes = await axios.get(
-`${API_BASE}/user/profile`,
+`${API}/user/profile`,
 {withCredentials:true}
 );
 
 const statsRes = await axios.get(
-`${API_BASE}/dashboard/stats`,
+`${API}/dashboard/stats`,
 {withCredentials:true}
 );
 
@@ -60,7 +60,7 @@ formData.append("avatar",e.target.files[0]);
 try{
 
 await axios.post(
-`${API_BASE}/avatar/upload`,
+`${API}/avatar/upload`,
 formData,
 {withCredentials:true}
 );
@@ -87,7 +87,7 @@ return;
 try{
 
 await axios.post(
-`${API_BASE}/account/delete-account`,
+`${API}/account/delete-account`,
 {password:deletePassword},
 {withCredentials:true}
 );

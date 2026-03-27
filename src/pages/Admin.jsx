@@ -1,8 +1,7 @@
 import { useEffect,useState } from "react";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
-
-const API="http://localhost:8080/api";
+import API from "../config/api";
 
 export default function Admin(){
 

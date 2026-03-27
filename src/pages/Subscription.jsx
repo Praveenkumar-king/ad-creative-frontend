@@ -2,7 +2,7 @@ import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import "../styles/subscription.css";
 
-const API="http://localhost:8080/api";
+import API from "../config/api";
 
 export default function Subscription(){
 
