@@ -8,7 +8,7 @@ import Footer from "../components/Footer";
 import ParticlesBG from "../components/ParticlesBG";
 import ThemeToggle from "../components/ThemeToggle";
 
-import "../styles/home.css";
+import "../styles/Home.css";
 
 export default function Home(){
 
