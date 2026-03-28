@@ -1,44 +1,99 @@
-// src/pages/Signup.jsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import API from "../services/api";
+import axios from "axios";
+import API from "../config/api";
 import "../styles/auth.css";
 
-export default function Signup() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function Login() {
+
   const navigate = useNavigate();
 
-  const handleSignup = async () => {
-    try {
-      const res = await API.post("/auth/signup", { name, email, password });
+  const [email,setEmail] = useState("");
+  const [password,setPassword] = useState("");
+  const [loading,setLoading] = useState(false);
 
-      // If backend is demo mode, it might return demo flag; still prompt user.
-      alert(res.data.message || "Signup successful. Check your email to verify account.");
-      navigate("/login");
-    } catch (err) {
-      alert(err.response?.data?.error || "Signup Failed");
+  const login = async () => {
+
+    if(!email || !password){
+      alert("Enter email & password");
+      return;
     }
+
+    try {
+
+      setLoading(true);
+
+      const res = await axios.post(
+        `${API}/auth/login`,
+        { email, password },
+        { withCredentials: true }
+      );
+
+      localStorage.setItem("user", JSON.stringify(res.data));
+
+      setLoading(false);
+
+      navigate("/dashboard");
+
+    } catch (err) {
+
+      setLoading(false);
+
+      alert(
+        err.response?.data?.error ||
+        "Login Failed"
+      );
+
+    }
+
   };
 
   return (
+
     <div className="authPage">
+
       <div className="leftHero">
         <h1>AdVantage Gen</h1>
         <p>AI-powered ad creative intelligence</p>
       </div>
 
       <div className="authCard">
+
         <div>
-          <h2>Create Account</h2>
-          <input placeholder="Full Name" value={name} onChange={(e)=>setName(e.target.value)} />
-          <input placeholder="Email Address" value={email} onChange={(e)=>setEmail(e.target.value)} />
-          <input type="password" placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)} />
-          <button onClick={handleSignup}>Signup</button>
-          <p className="switchText">Already have account? <Link to="/login">Login</Link></p>
+
+          <h2>Sign in</h2>
+
+          <input
+            placeholder="Email Address"
+            value={email}
+            onChange={(e)=>setEmail(e.target.value)}
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e)=>setPassword(e.target.value)}
+          />
+
+          <button onClick={login} disabled={loading}>
+            {loading ? "Logging in..." : "Continue"}
+          </button>
+
+          <p className="switchText">
+            <Link to="/forgot-password">Forgot Password?</Link>
+          </p>
+
+          <p className="switchText">
+            New user? <Link to="/signup">Create account</Link>
+          </p>
+
         </div>
+
       </div>
+
     </div>
+
   );
+
 }
