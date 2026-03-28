@@ -216,7 +216,7 @@ are game changers for our marketing team."
 <li>Email Support</li>
 </ul>
 
-<Link to="/subscription" className="pricingBtn">
+<Link to="/signup" className="pricingBtn">
 Choose Plan
 </Link>
 
@@ -244,7 +244,7 @@ Most Popular
 <li>Priority Support</li>
 </ul>
 
-<Link to="/subscription" className="pricingBtn">
+<Link to="/signup" className="pricingBtn">
 Choose Plan
 </Link>
 
@@ -268,7 +268,7 @@ Choose Plan
 <li>Premium Support</li>
 </ul>
 
-<Link to="/subscription" className="pricingBtn">
+<Link to="/signup" className="pricingBtn">
 Choose Plan
 </Link>
 
