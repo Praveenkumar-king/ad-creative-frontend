@@ -4,18 +4,19 @@ import axios from "axios";
 import API from "../config/api";
 import "../styles/auth.css";
 
-export default function Login() {
+export default function Signup() {
 
   const navigate = useNavigate();
 
-  const [email,setEmail] = useState("");
-  const [password,setPassword] = useState("");
-  const [loading,setLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const login = async () => {
+  const handleSignup = async () => {
 
-    if(!email || !password){
-      alert("Enter email & password");
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      alert("All fields required");
       return;
     }
 
@@ -24,26 +25,31 @@ export default function Login() {
       setLoading(true);
 
       const res = await axios.post(
-        `${API}/auth/login`,
-        { email, password },
-        { withCredentials: true }
+        `${API}/auth/signup`,
+        {
+          name: name.trim(),
+          email: email.trim(),
+          password
+        },
+        {
+          withCredentials: true
+        }
       );
 
-      localStorage.setItem("user", JSON.stringify(res.data));
+      alert(
+        res.data?.message || "Signup successful — verification email sent"
+      );
 
-      setLoading(false);
-
-      navigate("/dashboard");
+      navigate("/login");
 
     } catch (err) {
 
-      setLoading(false);
-
       alert(
-        err.response?.data?.error ||
-        "Login Failed"
+        err.response?.data?.error || "Signup Failed"
       );
 
+    } finally {
+      setLoading(false);
     }
 
   };
@@ -58,42 +64,41 @@ export default function Login() {
       </div>
 
       <div className="authCard">
-
         <div>
 
-          <h2>Sign in</h2>
+          <h2>Create Account</h2>
+
+          <input
+            placeholder="Full Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
 
           <input
             placeholder="Email Address"
             value={email}
-            onChange={(e)=>setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
 
           <input
             type="password"
             placeholder="Password"
             value={password}
-            onChange={(e)=>setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
 
-          <button onClick={login} disabled={loading}>
-            {loading ? "Logging in..." : "Continue"}
+          <button onClick={handleSignup} disabled={loading}>
+            {loading ? "Creating..." : "Signup"}
           </button>
 
           <p className="switchText">
-            <Link to="/forgot-password">Forgot Password?</Link>
-          </p>
-
-          <p className="switchText">
-            New user? <Link to="/signup">Create account</Link>
+            Already have account? <Link to="/login">Login</Link>
           </p>
 
         </div>
-
       </div>
 
     </div>
 
   );
-
 }
