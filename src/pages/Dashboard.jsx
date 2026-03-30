@@ -4,7 +4,6 @@ import Sidebar from "../components/Sidebar";
 import "../styles/dashboard.css";
 import API from "../config/api";
 
-
 export default function Dashboard() {
 
   const user = JSON.parse(localStorage.getItem("user"));
@@ -12,6 +11,9 @@ export default function Dashboard() {
   const [stats,setStats] = useState(null);
   const [greeting,setGreeting] = useState("");
   const [time,setTime] = useState("");
+
+  /* ✅ NEW */
+  const [menuOpen,setMenuOpen] = useState(false);
 
   useEffect(()=>{
 
@@ -44,10 +46,6 @@ export default function Dashboard() {
 
   };
 
-  /* ======================
-     GREETING
-  ====================== */
-
   const getGreeting = ()=>{
 
     const hour = new Date().getHours();
@@ -59,10 +57,6 @@ export default function Dashboard() {
     return "🌙 Good Night";
 
   };
-
-  /* ======================
-     LIVE CLOCK
-  ====================== */
 
   const updateClock = ()=>{
 
@@ -86,11 +80,20 @@ export default function Dashboard() {
 
     <div className="dashboard">
 
-      <Sidebar/>
+      {/* ✅ HAMBURGER */}
+      <button 
+        className="menuToggle"
+        onClick={()=>setMenuOpen(!menuOpen)}
+      >
+        ☰
+      </button>
+
+      {/* ✅ SIDEBAR */}
+      <div className={`sidebarWrapper ${menuOpen ? "open" : ""}`}>
+        <Sidebar/>
+      </div>
 
       <div className="content">
-
-        {/* GRADIENT HEADER */}
 
         <div className="greetingHeader">
 
@@ -105,9 +108,6 @@ export default function Dashboard() {
 
         </div>
 
-
-        {/* TOP BUTTON */}
-
         <div className="topBar">
 
           <button
@@ -118,9 +118,6 @@ export default function Dashboard() {
           </button>
 
         </div>
-
-
-        {/* CREDITS BOX */}
 
         <div className="creditsBox">
 
@@ -137,21 +134,13 @@ export default function Dashboard() {
 
         </div>
 
-
-        {/* PLAN EXPIRY */}
-
         {stats.planExpire && (
 
           <div className="planExpireBox">
-
             Plan expires on: {new Date(stats.planExpire).toDateString()}
-
           </div>
 
         )}
-
-
-        {/* STATS */}
 
         <div className="statsGrid">
 

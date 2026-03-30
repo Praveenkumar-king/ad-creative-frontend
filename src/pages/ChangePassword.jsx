@@ -1,6 +1,8 @@
 import { useState, useRef } from "react";
 import axios from "axios";
+import Sidebar from "../components/Sidebar";
 import "../styles/changePassword.css";
+import "../styles/dashboard.css";
 import API from "../config/api";
 
 export default function ChangePassword(){
@@ -15,12 +17,14 @@ const [timer,setTimer]=useState(0);
 const [loading,setLoading]=useState(false);
 const [success,setSuccess]=useState(false);
 
+/* ✅ NEW */
+const [menuOpen,setMenuOpen]=useState(false);
+
 const inputs=useRef([]);
 
 const [showOld,setShowOld]=useState(false);
 const [showNew,setShowNew]=useState(false);
 const [showConfirm,setShowConfirm]=useState(false);
-
 
 /* PASSWORD STRENGTH */
 
@@ -34,7 +38,6 @@ return "strong";
 return "medium";
 
 };
-
 
 /* SEND OTP */
 
@@ -53,7 +56,7 @@ await axios.post(
 {withCredentials:true}
 );
 
-alert("OTP sent to email✅.Please Check Spam/Jun Folder");
+alert("OTP sent to email ✅");
 
 startTimer();
 
@@ -68,7 +71,6 @@ err.response?.data?.error ||
 
 };
 
-
 /* TIMER */
 
 const startTimer=()=>{
@@ -78,31 +80,25 @@ setTimer(60);
 const interval=setInterval(()=>{
 
 setTimer((t)=>{
-
 if(t<=1){
 clearInterval(interval);
 return 0;
 }
-
 return t-1;
-
 });
 
 },1000);
 
 };
 
-
-/* OTP INPUT */
+/* OTP */
 
 const handleOtpChange=(value,index)=>{
 
 if(!/^[0-9]?$/.test(value)) return;
 
 const newOtp=[...otp];
-
 newOtp[index]=value;
-
 setOtp(newOtp);
 
 if(value && index<5){
@@ -117,8 +113,7 @@ verifyOTP(code);
 
 };
 
-
-/* VERIFY OTP */
+/* VERIFY */
 
 const verifyOTP=async(code)=>{
 
@@ -133,21 +128,15 @@ setLoading(true);
 
 await axios.post(
 `${API}/change-password/verify-otp`,
-{
-otp:code,
-newPassword
-},
+{ otp:code, newPassword },
 {withCredentials:true}
 );
 
 setLoading(false);
-
 setSuccess(true);
 
 setTimeout(()=>{
-
 window.location.href="/login";
-
 },2500);
 
 }catch(err){
@@ -163,31 +152,37 @@ err.response?.data?.error ||
 
 };
 
-
 /* SUCCESS PAGE */
 
 if(success){
-
 return(
-
 <div className="successPage">
-
 <div className="successBox">
-
 <h2>🎉 Password Changed</h2>
-
 <p>Your password has been updated successfully</p>
-
 </div>
-
 </div>
-
 );
-
 }
 
-
 return(
+
+<div className="dashboard">
+
+{/* ✅ HAMBURGER */}
+<button 
+className="menuToggle"
+onClick={()=>setMenuOpen(!menuOpen)}
+>
+☰
+</button>
+
+{/* ✅ SIDEBAR */}
+<div className={`sidebarWrapper ${menuOpen ? "open" : ""}`}>
+<Sidebar/>
+</div>
+
+<div className="content">
 
 <div className="changePasswordPage">
 
@@ -195,83 +190,56 @@ return(
 
 <h2>Change Password</h2>
 
-
-{/* OLD PASSWORD */}
-
 <div className="inputBox">
-
 <input
 type={showOld?"text":"password"}
 placeholder="Old Password"
 value={oldPassword}
 onChange={(e)=>setOldPassword(e.target.value)}
 />
-
 <span onClick={()=>setShowOld(!showOld)}>
 {showOld?"🙈":"👁"}
 </span>
-
 </div>
 
-
-{/* NEW PASSWORD */}
-
 <div className="inputBox">
-
 <input
 type={showNew?"text":"password"}
 placeholder="New Password"
 value={newPassword}
 onChange={(e)=>setNewPassword(e.target.value)}
 />
-
 <span onClick={()=>setShowNew(!showNew)}>
 {showNew?"🙈":"👁"}
 </span>
-
 </div>
-
 
 <p className={`strength ${getStrength()}`}>
 Password Strength: {getStrength()}
 </p>
 
-
-{/* CONFIRM PASSWORD */}
-
 <div className="inputBox">
-
 <input
 type={showConfirm?"text":"password"}
 placeholder="Confirm Password"
 value={confirm}
 onChange={(e)=>setConfirm(e.target.value)}
 />
-
 <span onClick={()=>setShowConfirm(!showConfirm)}>
 {showConfirm?"🙈":"👁"}
 </span>
-
 </div>
-
 
 <button
 className="sendBtn"
 onClick={sendOTP}
 disabled={timer>0}
 >
-
 {timer>0 ? `Resend OTP (${timer}s)` : "Send OTP"}
-
 </button>
 
-
-{/* OTP BOXES */}
-
 <div className="otpContainer">
-
 {otp.map((digit,index)=>(
-
 <input
 key={index}
 ref={(el)=>inputs.current[index]=el}
@@ -280,14 +248,14 @@ onChange={(e)=>handleOtpChange(e.target.value,index)}
 maxLength="1"
 className="otpBox"
 />
-
 ))}
-
 </div>
-
 
 {loading && <div className="loader"></div>}
 
+</div>
+
+</div>
 
 </div>
 

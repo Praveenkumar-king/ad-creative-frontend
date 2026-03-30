@@ -5,8 +5,8 @@
   height:100vh;
   width:100%;
   font-family: "Segoe UI", sans-serif;
+  overflow:hidden;
 }
-
 
 /* LEFT SIDE HERO */
 
@@ -20,6 +20,7 @@
   background: linear-gradient(135deg,#6366f1,#06b6d4);
   color:white;
   text-align:center;
+  padding:20px;
 }
 
 .leftHero h1{
@@ -43,13 +44,15 @@
   align-items:center;
 
   background:#020617;
+  padding:20px;
 }
 
 
 /* CARD BOX */
 
 .authCard > div{
-  width:380px;
+  width:100%;
+  max-width:380px;
   padding:40px;
   border-radius:12px;
 
@@ -62,6 +65,7 @@
 .authCard h2{
   margin-bottom:20px;
   color:white;
+  text-align:center;
 }
 
 
@@ -77,6 +81,11 @@
 
   background:#1e293b;
   color:white;
+  font-size:14px;
+}
+
+.authCard input::placeholder{
+  color:#94a3b8;
 }
 
 .authCard input:focus{
@@ -98,10 +107,17 @@
 
   cursor:pointer;
   font-weight:600;
+  transition:0.3s ease;
 }
 
 .authCard button:hover{
   opacity:0.9;
+  transform:translateY(-1px);
+}
+
+.authCard button:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
 }
 
 
@@ -110,9 +126,99 @@
 .switchText{
   margin-top:15px;
   color:#94a3b8;
+  text-align:center;
+  font-size:14px;
 }
 
 .switchText a{
   color:#60a5fa;
   text-decoration:none;
+}
+
+.switchText a:hover{
+  text-decoration:underline;
+}
+
+
+/* ========================= */
+/* 🔥 MOBILE RESPONSIVE */
+/* ========================= */
+
+@media (max-width: 900px){
+
+  .authPage{
+    flex-direction:column;
+  }
+
+  .leftHero{
+    width:100%;
+    height:180px;
+    padding:20px;
+  }
+
+  .leftHero h1{
+    font-size:32px;
+  }
+
+  .leftHero p{
+    font-size:14px;
+  }
+
+  .authCard{
+    width:100%;
+    height:calc(100vh - 180px);
+    padding:20px;
+  }
+
+  .authCard > div{
+    padding:30px 20px;
+  }
+
+}
+
+
+/* 📱 SMALL MOBILE */
+
+@media (max-width: 500px){
+
+  .leftHero{
+    height:140px;
+  }
+
+  .leftHero h1{
+    font-size:26px;
+  }
+
+  .authCard{
+    padding:10px;
+  }
+
+  .authCard > div{
+    padding:24px 16px;
+    border-radius:10px;
+  }
+
+  .authCard input{
+    padding:10px;
+  }
+
+  .authCard button{
+    padding:10px;
+  }
+
+}
+
+
+/* 📱 EXTRA SMALL (ULTRA COMPACT) */
+
+@media (max-width: 360px){
+
+  .leftHero{
+    display:none; /* fully hide hero */
+  }
+
+  .authCard{
+    height:100vh;
+  }
+
 }

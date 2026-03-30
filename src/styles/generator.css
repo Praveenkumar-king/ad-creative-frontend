@@ -8,9 +8,7 @@ gap:30px;
 align-items:flex-start;
 }
 
-/* =========================
-   LEFT PANEL
-========================= */
+/* LEFT PANEL */
 
 .generatorLeft{
 flex:1;
@@ -18,10 +16,6 @@ background:#0f172a;
 padding:30px;
 border-radius:12px;
 box-shadow:0 10px 30px rgba(0,0,0,0.4);
-}
-
-.generatorLeft h2{
-margin-bottom:10px;
 }
 
 .generatorLeft textarea{
@@ -33,17 +27,9 @@ border:none;
 border-radius:8px;
 background:#1e293b;
 color:white;
-font-size:14px;
-resize:none;
 }
 
-.generatorLeft textarea:focus{
-outline:none;
-}
-
-/* =========================
-   VOICE OPTIONS
-========================= */
+/* VOICE */
 
 .voiceOptions{
 margin-top:15px;
@@ -58,17 +44,9 @@ background:#1e293b;
 border:none;
 color:white;
 border-radius:6px;
-cursor:pointer;
-transition:0.2s;
 }
 
-.voiceOptions button:hover{
-background:#334155;
-}
-
-/* =========================
-   GENERATE BUTTON
-========================= */
+/* BUTTONS */
 
 .generateBtn{
 margin-top:20px;
@@ -78,19 +56,7 @@ background:linear-gradient(90deg,#6366f1,#06b6d4);
 border:none;
 color:white;
 border-radius:8px;
-cursor:pointer;
-font-size:15px;
-font-weight:500;
-transition:0.2s;
 }
-
-.generateBtn:hover{
-opacity:0.9;
-}
-
-/* =========================
-   REGENERATE BUTTON
-========================= */
 
 .regenBtn{
 margin-top:10px;
@@ -100,25 +66,15 @@ background:#334155;
 border:none;
 color:white;
 border-radius:8px;
-cursor:pointer;
-transition:0.2s;
 }
 
-.regenBtn:hover{
-background:#475569;
-}
-
-/* =========================
-   RIGHT PANEL
-========================= */
+/* RIGHT PANEL */
 
 .generatorRight{
 width:420px;
 }
 
-/* =========================
-   PREVIEW BOX
-========================= */
+/* PREVIEW */
 
 .previewBox{
 min-height:260px;
@@ -129,18 +85,14 @@ display:flex;
 justify-content:center;
 align-items:center;
 padding:10px;
-box-shadow:0 8px 20px rgba(0,0,0,0.4);
 }
 
 .previewImage{
 width:100%;
 border-radius:10px;
-object-fit:cover;
 }
 
-/* =========================
-   COPY BOX
-========================= */
+/* COPY */
 
 .copyBox{
 min-height:180px;
@@ -148,72 +100,26 @@ background:#0f172a;
 border-radius:10px;
 padding:16px;
 margin-bottom:15px;
-box-shadow:0 8px 20px rgba(0,0,0,0.4);
 }
-
-.captionText{
-line-height:1.6;
-color:#e5e7eb;
-font-size:14px;
-}
-
-/* =========================
-   PLACEHOLDER TEXT
-========================= */
-
-.placeholder{
-opacity:0.6;
-font-size:14px;
-}
-
-/* =========================
-   BUTTON GROUP
-========================= */
 
 .generatorButtons{
 display:flex;
 gap:10px;
 }
 
-/* DOWNLOAD */
-
-.downloadBtn{
-flex:1;
-padding:12px;
-background:#22c55e;
-border:none;
-color:white;
-border-radius:8px;
-cursor:pointer;
-font-weight:500;
-transition:0.2s;
-}
-
-.downloadBtn:hover{
-background:#16a34a;
-}
-
-/* COPY */
-
+.downloadBtn,
 .copyBtn{
 flex:1;
 padding:12px;
-background:#6366f1;
 border:none;
-color:white;
 border-radius:8px;
-cursor:pointer;
-font-weight:500;
-transition:0.2s;
+color:white;
 }
 
-.copyBtn:hover{
-background:#4f46e5;
-}
+.downloadBtn{ background:#22c55e; }
+.copyBtn{ background:#6366f1; }
 
-/* =========================
-   PROGRESS BAR
-========================= */
+/* PROGRESS */
 
 .progressContainer{
 margin-top:20px;
@@ -226,22 +132,41 @@ border-radius:8px;
 height:8px;
 background:linear-gradient(90deg,#6366f1,#06b6d4);
 border-radius:8px;
-transition:width 0.4s;
-margin-bottom:10px;
 }
 
 /* =========================
-   TYPING CURSOR
+   🔥 MOBILE RESPONSIVE
 ========================= */
 
-.captionText::after{
-content:"|";
-margin-left:4px;
-animation:blink 1s infinite;
+@media (max-width:900px){
+
+.generatorMain{
+flex-direction:column;
 }
 
-@keyframes blink{
-0%{opacity:1;}
-50%{opacity:0;}
-100%{opacity:1;}
+.generatorRight{
+width:100%;
+}
+
+.previewBox{
+min-height:220px;
+}
+
+}
+
+@media (max-width:500px){
+
+.generatorLeft{
+padding:20px;
+}
+
+.generatorButtons{
+flex-direction:column;
+}
+
+.downloadBtn,
+.copyBtn{
+width:100%;
+}
+
 }

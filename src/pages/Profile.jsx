@@ -16,6 +16,9 @@ const [loading,setLoading] = useState(true);
 const [showDeleteModal,setShowDeleteModal] = useState(false);
 const [deletePassword,setDeletePassword] = useState("");
 
+/* ✅ NEW */
+const [menuOpen,setMenuOpen] = useState(false);
+
 useEffect(()=>{
 loadData();
 },[]);
@@ -124,13 +127,24 @@ return(
 
 <div className="dashboard">
 
+{/* ✅ HAMBURGER */}
+<button 
+className="menuToggle"
+onClick={()=>setMenuOpen(!menuOpen)}
+>
+☰
+</button>
+
+{/* ✅ SIDEBAR */}
+<div className={`sidebarWrapper ${menuOpen ? "open" : ""}`}>
 <Sidebar/>
+</div>
 
 <div className="content">
 
 <div className="profileCard">
 
-{/* PROFILE HEADER */}
+{/* HEADER */}
 
 <div className="profileHeader">
 
@@ -147,9 +161,7 @@ borderRadius:"50%",
 objectFit:"cover"
 }}
 />
-) : (
-"👤"
-)}
+) : ("👤")}
 
 </div>
 
@@ -166,19 +178,15 @@ objectFit:"cover"
 
 </div>
 
-{/* AVATAR UPLOAD */}
-
 <div style={{marginBottom:"20px"}}>
-
 <input
 type="file"
 accept="image/*"
 onChange={uploadAvatar}
 />
-
 </div>
 
-{/* PROFILE STATS */}
+{/* STATS */}
 
 <div className="profileStats">
 
@@ -199,7 +207,7 @@ onChange={uploadAvatar}
 
 </div>
 
-{/* PROFILE DETAILS */}
+{/* DETAILS */}
 
 <div className="profileDetails">
 
@@ -208,8 +216,6 @@ onChange={uploadAvatar}
 {user.isVerified && (
 <p>✔ Email verified and secured</p>
 )}
-
-{/* ACTION BUTTONS */}
 
 <div className="profileActions">
 
@@ -235,7 +241,7 @@ Delete Account
 
 </div>
 
-{/* DELETE ACCOUNT MODAL */}
+{/* DELETE MODAL */}
 
 {showDeleteModal && (
 
@@ -245,9 +251,7 @@ Delete Account
 
 <h3>Delete Account</h3>
 
-<p>
-Enter your password to permanently delete your account.
-</p>
+<p>Enter your password to permanently delete your account.</p>
 
 <input
 type="password"

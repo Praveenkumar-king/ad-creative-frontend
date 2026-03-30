@@ -16,6 +16,9 @@ const [progress,setProgress]=useState(0);
 const [result,setResult]=useState(null);
 const [typedCaption,setTypedCaption]=useState("");
 
+/* ✅ NEW */
+const [menuOpen,setMenuOpen]=useState(false);
+
 /* ========================
    TYPING ANIMATION
 ======================== */
@@ -121,7 +124,18 @@ return(
 
 <div className="dashboard">
 
+{/* ✅ HAMBURGER */}
+<button 
+className="menuToggle"
+onClick={()=>setMenuOpen(!menuOpen)}
+>
+☰
+</button>
+
+{/* ✅ SIDEBAR WRAPPER */}
+<div className={`sidebarWrapper ${menuOpen ? "open" : ""}`}>
 <Sidebar/>
+</div>
 
 <div className="content">
 
@@ -199,7 +213,7 @@ className="previewImage"
 alt="Generated Poster"
 />
 
-):(
+):( 
 
 <p className="placeholder">
 Image preview will appear here
@@ -220,7 +234,7 @@ Image preview will appear here
 {typedCaption}
 </div>
 
-):(
+):( 
 
 <p className="placeholder">
 Your generated ad copy will appear here.
@@ -230,8 +244,6 @@ Your generated ad copy will appear here.
 
 </div>
 
-
-{/* BUTTONS */}
 
 {result?.imageUrl && (
 

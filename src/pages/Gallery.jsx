@@ -2,11 +2,15 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import "../styles/gallery.css";
+import "../styles/dashboard.css";
 import API from "../config/api";
 
 export default function Gallery(){
 
 const [campaigns,setCampaigns] = useState([]);
+
+/* ✅ NEW */
+const [menuOpen,setMenuOpen] = useState(false);
 
 useEffect(()=>{
 fetchCampaigns();
@@ -35,7 +39,18 @@ return(
 
 <div className="dashboard">
 
+{/* ✅ HAMBURGER */}
+<button 
+className="menuToggle"
+onClick={()=>setMenuOpen(!menuOpen)}
+>
+☰
+</button>
+
+{/* ✅ SIDEBAR */}
+<div className={`sidebarWrapper ${menuOpen ? "open" : ""}`}>
 <Sidebar/>
+</div>
 
 <div className="content">
 

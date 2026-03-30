@@ -13,12 +13,14 @@ export default function History(){
   const [history,setHistory] = useState([]);
   const [loading,setLoading] = useState(true);
 
+  /* ✅ NEW */
+  const [menuOpen,setMenuOpen] = useState(false);
+
   useEffect(()=>{
 
     loadHistory();
 
   },[]);
-
 
   const loadHistory = async ()=>{
 
@@ -43,7 +45,6 @@ export default function History(){
     }
 
   };
-
 
   const deleteCampaign = async (id)=>{
 
@@ -73,25 +74,48 @@ export default function History(){
 
   };
 
-
   if(loading){
     return(
       <div className="dashboard">
-        <Sidebar/>
+
+        {/* ✅ HAMBURGER */}
+        <button 
+          className="menuToggle"
+          onClick={()=>setMenuOpen(!menuOpen)}
+        >
+          ☰
+        </button>
+
+        {/* ✅ SIDEBAR */}
+        <div className={`sidebarWrapper ${menuOpen ? "open" : ""}`}>
+          <Sidebar/>
+        </div>
+
         <div className="content">
           <h1>Ad History</h1>
           <p>Loading history...</p>
         </div>
+
       </div>
     );
   }
-
 
   return(
 
     <div className="dashboard">
 
-      <Sidebar/>
+      {/* ✅ HAMBURGER */}
+      <button 
+        className="menuToggle"
+        onClick={()=>setMenuOpen(!menuOpen)}
+      >
+        ☰
+      </button>
+
+      {/* ✅ SIDEBAR */}
+      <div className={`sidebarWrapper ${menuOpen ? "open" : ""}`}>
+        <Sidebar/>
+      </div>
 
       <div className="content">
 
