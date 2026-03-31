@@ -4,22 +4,38 @@ import Sidebar from "../components/Sidebar";
 import "../styles/dashboard.css";
 import "../styles/activity.css";
 import API from "../config/api";
+import { useAuth } from "../context/AuthContext";
 
 export default function Activity(){
 
+const { token } = useAuth();
+
 const [logs,setLogs]=useState([]);
 const [menuOpen,setMenuOpen]=useState(false);
+const [error,setError]=useState("");
 
 useEffect(()=>{
-fetchLogs();
-},[]);
+if(token){
+  fetchLogs();
+}
+},[token]);
 
 const fetchLogs=async()=>{
 try{
-const res=await axios.get(`${API}/activity`,{withCredentials:true});
+
+const res=await axios.get(`${API}/activity`,{
+  headers:{
+    Authorization:`Bearer ${token}`
+  }
+});
+
 setLogs(res.data);
-}catch{
-alert("Failed to load activity");
+
+}catch(err){
+
+console.log("Activity error:",err?.response?.data);
+setError("⚠️ Failed to load activity");
+
 }
 };
 
@@ -32,7 +48,7 @@ if(action.toLowerCase().includes("delete")) return "🗑";
 return "⚡";
 };
 
-/* 💻 BROWSER DETECTION */
+/* 💻 BROWSER */
 
 const getBrowser=(ua)=>{
 
@@ -47,17 +63,16 @@ return "🌍 Browser";
 
 };
 
-/* 📍 SIMPLE LOCATION (FAKE STYLE FROM IP) */
+/* 📍 LOCATION */
 
 const getLocation=(ip)=>{
 if(!ip) return "Unknown";
 
-/* just for UI look 😎 */
 if(ip.startsWith("192") || ip.startsWith("127")) return "🏠 Localhost";
 return "🌍 Internet";
 };
 
-/* 🎨 COLOR */
+/* 🎨 TYPE */
 
 const getType=(action)=>{
 if(action.toLowerCase().includes("delete")) return "danger";
@@ -85,7 +100,10 @@ onClick={()=>setMenuOpen(!menuOpen)}
 
 <h2 className="activityTitle">Security Activity</h2>
 
-{logs.length===0 && <p>No activity yet</p>}
+{/* 🔥 ERROR */}
+{error && <div className="toastError">{error}</div>}
+
+{logs.length===0 && !error && <p>No activity yet</p>}
 
 <div className="timeline">
 

@@ -4,32 +4,46 @@ import Sidebar from "../components/Sidebar";
 import "../styles/gallery.css";
 import "../styles/dashboard.css";
 import API from "../config/api";
+import { useAuth } from "../context/AuthContext";
 
 export default function Gallery(){
 
-const [campaigns,setCampaigns] = useState([]);
+const { token } = useAuth();
 
-/* ✅ NEW */
+const [campaigns,setCampaigns] = useState([]);
 const [menuOpen,setMenuOpen] = useState(false);
+const [error,setError] = useState("");
+const [loading,setLoading] = useState(true);
 
 useEffect(()=>{
-fetchCampaigns();
-},[]);
+if(token){
+  fetchCampaigns();
+}
+},[token]);
 
 const fetchCampaigns = async()=>{
 
 try{
 
+setError("");
+
 const res = await axios.get(
 `${API}/campaign/my-campaigns`,
-{withCredentials:true}
+{
+  headers:{
+    Authorization:`Bearer ${token}`
+  }
+}
 );
 
 setCampaigns(res.data);
+setLoading(false);
 
-}catch{
+}catch(err){
 
-alert("Failed to load campaigns");
+console.log("Gallery error:",err?.response?.data);
+setError("⚠️ Failed to load campaigns");
+setLoading(false);
 
 }
 
@@ -39,7 +53,7 @@ return(
 
 <div className="dashboard">
 
-{/* ✅ HAMBURGER */}
+{/* ☰ MENU */}
 <button 
 className="menuToggle"
 onClick={()=>setMenuOpen(!menuOpen)}
@@ -47,7 +61,7 @@ onClick={()=>setMenuOpen(!menuOpen)}
 ☰
 </button>
 
-{/* ✅ SIDEBAR */}
+{/* SIDEBAR */}
 <div className={`sidebarWrapper ${menuOpen ? "open" : ""}`}>
 <Sidebar/>
 </div>
@@ -58,6 +72,16 @@ onClick={()=>setMenuOpen(!menuOpen)}
 AI Campaign Gallery
 </h1>
 
+{/* 🔥 ERROR */}
+{error && <div className="toastError">{error}</div>}
+
+{/* 🔄 LOADING */}
+{loading ? (
+  <p style={{padding:"20px"}}>Loading campaigns...</p>
+) : campaigns.length === 0 ? (
+  <p>No campaigns yet</p>
+) : (
+
 <div className="galleryGrid">
 
 {campaigns.map((item)=>(
@@ -65,7 +89,7 @@ AI Campaign Gallery
 <div key={item._id} className="galleryCard">
 
 <img
-src={`http://localhost:8080${item.imageUrl}`}
+src={`${API}${item.imageUrl}`}
 alt="campaign"
 />
 
@@ -82,7 +106,7 @@ alt="campaign"
 <div className="galleryButtons">
 
 <a
-href={`http://localhost:8080${item.imageUrl}`}
+href={`${API}${item.imageUrl}`}
 download
 className="downloadBtn"
 >
@@ -112,6 +136,8 @@ Share
 ))}
 
 </div>
+
+)}
 
 </div>
 

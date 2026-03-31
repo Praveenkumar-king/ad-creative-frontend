@@ -3,38 +3,51 @@ import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import "../styles/dashboard.css";
 import "../styles/profile.css";
-
 import API from "../config/api";
+import { useAuth } from "../context/AuthContext";
 
 export default function Profile(){
+
+const { user: authUser, token, logout } = useAuth();
 
 const [user,setUser] = useState(null);
 const [stats,setStats] = useState(null);
 const [loading,setLoading] = useState(true);
+const [error,setError] = useState("");
 
-/* DELETE MODAL STATE */
 const [showDeleteModal,setShowDeleteModal] = useState(false);
 const [deletePassword,setDeletePassword] = useState("");
 
-/* ✅ NEW */
 const [menuOpen,setMenuOpen] = useState(false);
 
 useEffect(()=>{
-loadData();
-},[]);
+if(token){
+  loadData();
+}
+},[token]);
 
 const loadData = async ()=>{
 
 try{
 
+setError("");
+
 const profileRes = await axios.get(
 `${API}/user/profile`,
-{withCredentials:true}
+{
+  headers:{
+    Authorization:`Bearer ${token}`
+  }
+}
 );
 
 const statsRes = await axios.get(
 `${API}/dashboard/stats`,
-{withCredentials:true}
+{
+  headers:{
+    Authorization:`Bearer ${token}`
+  }
+}
 );
 
 setUser(profileRes.data);
@@ -42,8 +55,8 @@ setStats(statsRes.data);
 
 }catch(err){
 
-console.error(err);
-alert("Failed to load profile");
+console.log("Profile error:",err?.response?.data);
+setError("⚠️ Failed to load profile");
 
 }finally{
 
@@ -65,13 +78,18 @@ try{
 await axios.post(
 `${API}/avatar/upload`,
 formData,
-{withCredentials:true}
+{
+  headers:{
+    Authorization:`Bearer ${token}`
+  }
+}
 );
 
 loadData();
 
-}catch{
+}catch(err){
 
+console.log("Avatar error:",err?.response?.data);
 alert("Avatar upload failed");
 
 }
@@ -92,14 +110,16 @@ try{
 await axios.post(
 `${API}/account/delete-account`,
 {password:deletePassword},
-{withCredentials:true}
+{
+  headers:{
+    Authorization:`Bearer ${token}`
+  }
+}
 );
 
 alert("Account deleted successfully");
 
-localStorage.clear();
-
-window.location.href="/";
+logout(); // 🔥 clean logout
 
 }catch(err){
 
@@ -127,7 +147,6 @@ return(
 
 <div className="dashboard">
 
-{/* ✅ HAMBURGER */}
 <button 
 className="menuToggle"
 onClick={()=>setMenuOpen(!menuOpen)}
@@ -135,16 +154,16 @@ onClick={()=>setMenuOpen(!menuOpen)}
 ☰
 </button>
 
-{/* ✅ SIDEBAR */}
 <div className={`sidebarWrapper ${menuOpen ? "open" : ""}`}>
 <Sidebar/>
 </div>
 
 <div className="content">
 
-<div className="profileCard">
+{/* 🔥 ERROR */}
+{error && <div className="toastError">{error}</div>}
 
-{/* HEADER */}
+<div className="profileCard">
 
 <div className="profileHeader">
 
@@ -152,7 +171,7 @@ onClick={()=>setMenuOpen(!menuOpen)}
 
 {user.avatar ? (
 <img
-src={`http://localhost:8080${user.avatar}`}
+src={`${API}${user.avatar}`}
 alt="avatar"
 style={{
 width:"60px",
@@ -186,8 +205,6 @@ onChange={uploadAvatar}
 />
 </div>
 
-{/* STATS */}
-
 <div className="profileStats">
 
 <div className="statBox">
@@ -207,11 +224,9 @@ onChange={uploadAvatar}
 
 </div>
 
-{/* DETAILS */}
-
 <div className="profileDetails">
 
-<p><b>Role:</b> User</p>
+<p><b>Role:</b> {authUser?.role || "User"}</p>
 
 {user.isVerified && (
 <p>✔ Email verified and secured</p>

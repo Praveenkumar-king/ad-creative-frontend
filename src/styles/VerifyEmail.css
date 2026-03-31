@@ -1,0 +1,87 @@
+/* =========================
+   VERIFY EMAIL PAGE
+========================= */
+
+.verifyContainer{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#020617;
+  font-family:"Segoe UI",sans-serif;
+  color:white;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.verifyCard{
+  background:#0f172a;
+  padding:40px 50px;
+  border-radius:16px;
+  text-align:center;
+  border:1px solid #1e293b;
+  width:90%;
+  max-width:420px;
+
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* =========================
+   TITLE
+========================= */
+
+.verifyCard h2{
+  margin-bottom:15px;
+  font-size:22px;
+}
+
+/* =========================
+   LOADING TEXT
+========================= */
+
+.verifyText{
+  color:#94a3b8;
+  margin-bottom:25px;
+  font-size:14px;
+}
+
+/* =========================
+   SPINNER
+========================= */
+
+.verifySpinner{
+  width:50px;
+  height:50px;
+  margin:0 auto;
+
+  border:5px solid #1e293b;
+  border-top:5px solid #06b6d4;
+  border-radius:50%;
+
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  0%{transform:rotate(0deg);}
+  100%{transform:rotate(360deg);}
+}
+
+/* =========================
+   SUCCESS STATE (optional future)
+========================= */
+
+.successText{
+  color:#22c55e;
+  font-weight:600;
+}
+
+/* =========================
+   ERROR STATE (optional future)
+========================= */
+
+.errorText{
+  color:#ef4444;
+  font-weight:600;
+}

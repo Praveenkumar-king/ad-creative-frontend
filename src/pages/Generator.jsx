@@ -4,8 +4,11 @@ import Sidebar from "../components/Sidebar";
 import "../styles/generator.css";
 import "../styles/dashboard.css";
 import API from "../config/api";
+import { useAuth } from "../context/AuthContext";
 
 export default function Generator(){
+
+const { token } = useAuth();
 
 const [prompt,setPrompt]=useState("");
 const [voice,setVoice]=useState("Professional");
@@ -16,7 +19,6 @@ const [progress,setProgress]=useState(0);
 const [result,setResult]=useState(null);
 const [typedCaption,setTypedCaption]=useState("");
 
-/* ✅ NEW */
 const [menuOpen,setMenuOpen]=useState(false);
 
 /* ========================
@@ -26,13 +28,11 @@ const [menuOpen,setMenuOpen]=useState(false);
 const typeCaption=(text)=>{
 
 let index=0;
-
 setTypedCaption("");
 
 const interval=setInterval(()=>{
 
 setTypedCaption((prev)=>prev+text.charAt(index));
-
 index++;
 
 if(index>=text.length){
@@ -69,20 +69,23 @@ try{
 const res=await axios.post(
 `${API}/generate`,
 {prompt,voice},
-{withCredentials:true}
+{
+  headers:{
+    Authorization:`Bearer ${token}`
+  }
+}
 );
 
 clearInterval(timer);
 setProgress(100);
 
 setResult(res.data);
-
 typeCaption(res.data.caption);
 
 }catch(err){
 
-console.error(err);
-alert("Generation failed");
+console.log("Generate error:",err?.response?.data);
+alert(err?.response?.data?.error || "Generation failed");
 
 }finally{
 
@@ -93,7 +96,24 @@ setLoading(false);
 };
 
 /* ========================
-   DOWNLOAD POSTER
+   SAFE IMAGE URL FIX
+======================== */
+
+const getImageUrl = (url) => {
+
+if(!url) return "";
+
+// already full URL
+if(url.startsWith("http")) return url;
+
+// ensure slash
+if(!url.startsWith("/")) url = "/" + url;
+
+return `http://localhost:8080${url}`;
+};
+
+/* ========================
+   DOWNLOAD
 ======================== */
 
 const downloadPoster=()=>{
@@ -102,12 +122,12 @@ if(!result?.imageUrl) return;
 
 const filename=result.imageUrl.split("/").pop();
 
-window.open(`${API}/generate/download/${filename}`);
+window.open(`http://localhost:8080/generate/download/${filename}`);
 
 };
 
 /* ========================
-   COPY AI CAPTION
+   COPY CAPTION
 ======================== */
 
 const copyCaption=()=>{
@@ -115,7 +135,6 @@ const copyCaption=()=>{
 if(!result?.caption) return;
 
 navigator.clipboard.writeText(result.caption);
-
 alert("Caption copied");
 
 };
@@ -124,7 +143,6 @@ return(
 
 <div className="dashboard">
 
-{/* ✅ HAMBURGER */}
 <button 
 className="menuToggle"
 onClick={()=>setMenuOpen(!menuOpen)}
@@ -132,7 +150,6 @@ onClick={()=>setMenuOpen(!menuOpen)}
 ☰
 </button>
 
-{/* ✅ SIDEBAR WRAPPER */}
 <div className={`sidebarWrapper ${menuOpen ? "open" : ""}`}>
 <Sidebar/>
 </div>
@@ -141,7 +158,7 @@ onClick={()=>setMenuOpen(!menuOpen)}
 
 <div className="generatorMain">
 
-{/* LEFT PANEL */}
+{/* LEFT */}
 
 <div className="generatorLeft">
 
@@ -169,14 +186,9 @@ Generate Ad
 </button>
 
 {result && (
-
-<button
-className="regenBtn"
-onClick={generateAd}
->
+<button className="regenBtn" onClick={generateAd}>
 Regenerate
 </button>
-
 )}
 
 {loading && (
@@ -197,7 +209,7 @@ style={{width:`${progress}%`}}
 </div>
 
 
-{/* RIGHT PANEL */}
+{/* RIGHT */}
 
 <div className="generatorRight">
 
@@ -208,7 +220,7 @@ style={{width:`${progress}%`}}
 {result?.imageUrl ? (
 
 <img
-src={`http://localhost:8080${result.imageUrl}`}
+src={getImageUrl(result.imageUrl)}
 className="previewImage"
 alt="Generated Poster"
 />

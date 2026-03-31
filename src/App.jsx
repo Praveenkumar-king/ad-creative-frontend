@@ -18,49 +18,54 @@ import ShareCampaign from "./pages/ShareCampaign";
 import Activity from "./pages/Activity";
 import Admin from "./pages/Admin";
 import AdminDashboard from "./pages/AdminDashboard";
-import ChangePassword from "./pages/ChangePassword";   // ⭐ ADD THIS
+import ChangePassword from "./pages/ChangePassword";
+
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 
 function App() {
 
-return (
+  return (
 
-<AuthProvider>
+    <AuthProvider>
 
-<BrowserRouter>
+      <BrowserRouter>
 
-<Routes>
+        <Routes>
 
-<Route path="/" element={<Home />} />
-<Route path="/login" element={<Login />} />
-<Route path="/signup" element={<Signup />} />
+          {/* 🌐 PUBLIC */}
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-<Route path="/dashboard" element={<Dashboard />} />
-<Route path="/history" element={<History />} />
-<Route path="/profile" element={<Profile />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-<Route path="/forgot-password" element={<ForgotPassword />} />
-<Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/verify/:token" element={<VerifyEmail />} />
+          <Route path="/verify-success" element={<VerifySuccess />} />
 
-<Route path="/verify/:token" element={<VerifyEmail />} />
-<Route path="/verify-success" element={<VerifySuccess />} />
+          {/* 🔐 USER PROTECTED */}
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard/></ProtectedRoute>} />
+          <Route path="/history" element={<ProtectedRoute><History/></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile/></ProtectedRoute>} />
+          <Route path="/generator" element={<ProtectedRoute><Generator/></ProtectedRoute>} />
+          <Route path="/subscription" element={<ProtectedRoute><Subscription/></ProtectedRoute>} />
+          <Route path="/gallery" element={<ProtectedRoute><Gallery/></ProtectedRoute>} />
+          <Route path="/campaign/:id" element={<ProtectedRoute><ShareCampaign/></ProtectedRoute>} />
+          <Route path="/activity" element={<ProtectedRoute><Activity/></ProtectedRoute>} />
+          <Route path="/change-password" element={<ProtectedRoute><ChangePassword/></ProtectedRoute>} />
 
-<Route path="/generator" element={<Generator/>}/>
-<Route path="/subscription" element={<Subscription/>}/>
-<Route path="/gallery" element={<Gallery/>}/>
-<Route path="/campaign/:id" element={<ShareCampaign/>}/>
-<Route path="/activity" element={<Activity/>}/>
-<Route path="/admin" element={<Admin/>}/>
-<Route path="/admin-dashboard" element={<AdminDashboard/>}/>
+          {/* 👑 ADMIN */}
+          <Route path="/admin" element={<AdminRoute><Admin/></AdminRoute>} />
+          <Route path="/admin-dashboard" element={<AdminRoute><AdminDashboard/></AdminRoute>} />
 
-<Route path="/change-password" element={<ChangePassword/>}/>
+        </Routes>
 
-</Routes>
+      </BrowserRouter>
 
-</BrowserRouter>
+    </AuthProvider>
 
-</AuthProvider>
-
-);
+  );
 
 }
 

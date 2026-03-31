@@ -30,16 +30,16 @@ export default function Signup() {
           name: name.trim(),
           email: email.trim(),
           password
-        },
-        {
-          withCredentials: true
         }
       );
 
+      // ✅ KEEP YOUR ORIGINAL MESSAGE
       alert(
-        res.data?.message || "Signup successful — verification email sent"
+        res.data?.message || 
+        "Signup successful — verification email sent"
       );
 
+      // ✅ AFTER SIGNUP → LOGIN PAGE
       navigate("/login");
 
     } catch (err) {

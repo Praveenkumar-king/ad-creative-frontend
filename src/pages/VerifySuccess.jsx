@@ -1,31 +1,103 @@
-export default function VerifySuccess() {
+import { useEffect, useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import API from "../services/api";
+import "../styles/VerifySuccess.css";
 
-  return (
+export default function VerifySuccess(){
 
-    <div style={{
-      height:"100vh",
-      display:"flex",
-      justifyContent:"center",
-      alignItems:"center",
-      background:"#020617",
-      color:"white",
-      flexDirection:"column"
-    }}>
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
-      <h1>Email Verified Successfully ✅</h1>
+  const status = searchParams.get("status");
+  const msg = searchParams.get("msg");
 
-      <p>You can now login to your account.</p>
+  const [loading,setLoading] = useState(false);
+  const [resendMsg,setResendMsg] = useState("");
 
-      <a href="/login" style={{
-        marginTop:"20px",
-        padding:"10px 20px",
-        background:"#22c55e",
-        color:"white",
-        textDecoration:"none",
-        borderRadius:"6px"
-      }}>
-        Go to Login
-      </a>
+  // 🎉 simple confetti effect (basic)
+  useEffect(()=>{
+    if(status === "success"){
+      document.body.style.background = "#020617";
+    }
+  },[status]);
+
+  const resendVerification = async () => {
+
+    try{
+
+      setLoading(true);
+
+      await API.post("/auth/resend-verification");
+
+      setResendMsg("📩 Verification email sent again!");
+
+    }catch(err){
+
+      setResendMsg(
+        err.response?.data?.error || "Failed to resend email"
+      );
+
+    }finally{
+      setLoading(false);
+    }
+
+  };
+
+  return(
+
+    <div className="verifyContainer">
+
+      <div className="verifyCard">
+
+        {/* ✅ SUCCESS */}
+        {status === "success" && (
+          <>
+            <h2 className="successTitle">🎉 Email Verified!</h2>
+
+            <p className="successText">
+              Your account is now active 🚀
+            </p>
+
+            <button
+              className="verifyBtn"
+              onClick={()=>navigate("/login")}
+            >
+              Go to Login
+            </button>
+          </>
+        )}
+
+        {/* ❌ ERROR */}
+        {status === "error" && (
+          <>
+            <h2 className="errorTitle">❌ Verification Failed</h2>
+
+            <p className="errorText">
+              {msg || "Invalid or expired token"}
+            </p>
+
+            <button
+              className="verifyBtn"
+              onClick={resendVerification}
+              disabled={loading}
+            >
+              {loading ? "Sending..." : "Resend Verification"}
+            </button>
+
+            {resendMsg && (
+              <p className="verifyText">{resendMsg}</p>
+            )}
+
+            <button
+              className="secondaryBtn"
+              onClick={()=>navigate("/signup")}
+            >
+              Back to Signup
+            </button>
+          </>
+        )}
+
+      </div>
 
     </div>
 

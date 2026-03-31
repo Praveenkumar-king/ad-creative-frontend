@@ -15,15 +15,16 @@ export default function VerifyEmail(){
 
         await API.get(`/auth/verify/${token}`);
 
-        alert("Email verified successfully");
-
-        navigate("/login");
+        // ✅ SUCCESS → redirect with status
+        navigate("/verify-success?status=success");
 
       }catch(err){
 
-        alert(err.response?.data?.error || "Verification failed");
+        // ❌ ERROR → redirect with error message
+        const errorMsg =
+          err.response?.data?.error || "Verification failed";
 
-        navigate("/signup");
+        navigate(`/verify-success?status=error&msg=${encodeURIComponent(errorMsg)}`);
 
       }
 
@@ -35,10 +36,8 @@ export default function VerifyEmail(){
 
   return(
 
-    <div style={{padding:"40px"}}>
-
-      <h2>Email verification processing...</h2>
-
+    <div style={{padding:"40px", textAlign:"center"}}>
+      <h2>Verifying your email...</h2>
     </div>
 
   );

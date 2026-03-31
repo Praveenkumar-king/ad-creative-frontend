@@ -3,44 +3,62 @@ import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import "../styles/dashboard.css";
 import API from "../config/api";
+import { useAuth } from "../context/AuthContext";
 
 export default function Dashboard() {
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { user, token } = useAuth();
 
   const [stats,setStats] = useState(null);
+  const [loading,setLoading] = useState(true);
+  const [error,setError] = useState("");
   const [greeting,setGreeting] = useState("");
   const [time,setTime] = useState("");
 
-  /* ✅ NEW */
   const [menuOpen,setMenuOpen] = useState(false);
 
   useEffect(()=>{
+
+    if(!token) return;
 
     fetchStats();
     setGreeting(getGreeting());
     updateClock();
 
-    const timer = setInterval(updateClock,1000);
+    const clockTimer = setInterval(updateClock,1000);
+    const statsTimer = setInterval(fetchStats,30000);
 
-    return ()=>clearInterval(timer);
+    return ()=>{
+      clearInterval(clockTimer);
+      clearInterval(statsTimer);
+    };
 
-  },[]);
+  },[token]);
 
   const fetchStats = async ()=>{
 
     try{
 
+      setError("");
+
       const res = await axios.get(
         `${API}/dashboard/stats`,
-        {withCredentials:true}
+        {
+          headers:{
+            Authorization:`Bearer ${token}`
+          }
+        }
       );
 
       setStats(res.data);
+      setLoading(false);
 
-    }catch{
+    }catch(err){
 
-      console.log("Stats load failed");
+      setLoading(false);
+      setError("⚠️ Failed to load dashboard");
+
+      console.log("Stats error:", err?.response?.data || err.message);
 
     }
 
@@ -72,15 +90,11 @@ export default function Dashboard() {
 
   };
 
-  if(!stats){
-    return <p style={{padding:"40px"}}>Loading dashboard...</p>;
-  }
-
   return(
 
     <div className="dashboard">
 
-      {/* ✅ HAMBURGER */}
+      {/* ☰ MENU */}
       <button 
         className="menuToggle"
         onClick={()=>setMenuOpen(!menuOpen)}
@@ -88,13 +102,20 @@ export default function Dashboard() {
         ☰
       </button>
 
-      {/* ✅ SIDEBAR */}
       <div className={`sidebarWrapper ${menuOpen ? "open" : ""}`}>
         <Sidebar/>
       </div>
 
       <div className="content">
 
+        {/* 🔥 ERROR */}
+        {error && (
+          <div className="toastError">
+            {error}
+          </div>
+        )}
+
+        {/* HEADER */}
         <div className="greetingHeader">
 
           <h2>
@@ -119,62 +140,74 @@ export default function Dashboard() {
 
         </div>
 
-        <div className="creditsBox">
-
-          <span>
-            Credits Left: <b>{stats.creditsLeft}</b>
-          </span>
-
-          <button
-            className="buyCreditsBtn"
-            onClick={()=>alert("Payment feature coming soon 🚀")}
-          >
-            Buy Credits
-          </button>
-
-        </div>
-
-        {stats.planExpire && (
-
-          <div className="planExpireBox">
-            Plan expires on: {new Date(stats.planExpire).toDateString()}
+        {/* 🔥 LOADING */}
+        {loading ? (
+          <div className="skeletonGrid">
+            {Array(6).fill().map((_,i)=>(
+              <div key={i} className="skeletonCard"></div>
+            ))}
           </div>
+        ) : stats ? (
+
+          <>
+            <div className="creditsBox">
+
+              <span>
+                Credits Left: <b>{stats.creditsLeft}</b>
+              </span>
+
+              <button className="buyCreditsBtn">
+                Buy Credits
+              </button>
+
+            </div>
+
+            {stats.planExpire && (
+              <div className="planExpireBox">
+                Plan expires on: {new Date(stats.planExpire).toDateString()}
+              </div>
+            )}
+
+            <div className="statsGrid">
+
+              <div className="statCard">
+                <h3>{stats.adsGenerated}</h3>
+                <p>Ads Generated</p>
+              </div>
+
+              <div className="statCard">
+                <h3>{stats.creditsLeft}</h3>
+                <p>Credits Left</p>
+              </div>
+
+              <div className="statCard">
+                <h3>{stats.adsToday}</h3>
+                <p>Ads Today</p>
+              </div>
+
+              <div className="statCard">
+                <h3>{stats.adsMonth}</h3>
+                <p>This Month</p>
+              </div>
+
+              <div className="statCard">
+                <h3>{stats.mostUsedTone}</h3>
+                <p>Most Used Tone</p>
+              </div>
+
+              <div className="statCard">
+                <h3>{stats.mostUsedSize}</h3>
+                <p>Most Used Size</p>
+              </div>
+
+            </div>
+          </>
+
+        ) : (
+
+          <p style={{padding:"20px"}}>No data available</p>
 
         )}
-
-        <div className="statsGrid">
-
-          <div className="statCard">
-            <h3>{stats.adsGenerated}</h3>
-            <p>Ads Generated</p>
-          </div>
-
-          <div className="statCard">
-            <h3>{stats.creditsLeft}</h3>
-            <p>Credits Left</p>
-          </div>
-
-          <div className="statCard">
-            <h3>{stats.adsToday}</h3>
-            <p>Ads Today</p>
-          </div>
-
-          <div className="statCard">
-            <h3>{stats.adsMonth}</h3>
-            <p>This Month</p>
-          </div>
-
-          <div className="statCard">
-            <h3>{stats.mostUsedTone}</h3>
-            <p>Most Used Tone</p>
-          </div>
-
-          <div className="statCard">
-            <h3>{stats.mostUsedSize}</h3>
-            <p>Most Used Size</p>
-          </div>
-
-        </div>
 
       </div>
 

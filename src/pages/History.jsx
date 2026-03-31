@@ -7,36 +7,45 @@ import "../styles/dashboard.css";
 import "../styles/history.css";
 
 import API from "../config/api";
+import { useAuth } from "../context/AuthContext";
 
 export default function History(){
 
+  const { token } = useAuth();
+
   const [history,setHistory] = useState([]);
   const [loading,setLoading] = useState(true);
+  const [error,setError] = useState("");
 
-  /* ✅ NEW */
   const [menuOpen,setMenuOpen] = useState(false);
 
   useEffect(()=>{
-
-    loadHistory();
-
-  },[]);
+    if(token){
+      loadHistory();
+    }
+  },[token]);
 
   const loadHistory = async ()=>{
 
     try{
 
+      setError("");
+
       const res = await axios.get(
         `${API}/generate/history`,
-        {withCredentials:true}
+        {
+          headers:{
+            Authorization:`Bearer ${token}`
+          }
+        }
       );
 
       setHistory(res.data);
 
     }catch(err){
 
-      console.error(err);
-      alert("Failed to load history");
+      console.log("History error:",err?.response?.data);
+      setError("⚠️ Failed to load history");
 
     }finally{
 
@@ -58,7 +67,11 @@ export default function History(){
 
       await axios.delete(
         `${API}/generate/campaign/${id}`,
-        {withCredentials:true}
+        {
+          headers:{
+            Authorization:`Bearer ${token}`
+          }
+        }
       );
 
       setHistory(
@@ -67,7 +80,7 @@ export default function History(){
 
     }catch(err){
 
-      console.error(err);
+      console.log("Delete error:",err?.response?.data);
       alert("Delete failed");
 
     }
@@ -78,7 +91,6 @@ export default function History(){
     return(
       <div className="dashboard">
 
-        {/* ✅ HAMBURGER */}
         <button 
           className="menuToggle"
           onClick={()=>setMenuOpen(!menuOpen)}
@@ -86,7 +98,6 @@ export default function History(){
           ☰
         </button>
 
-        {/* ✅ SIDEBAR */}
         <div className={`sidebarWrapper ${menuOpen ? "open" : ""}`}>
           <Sidebar/>
         </div>
@@ -104,7 +115,6 @@ export default function History(){
 
     <div className="dashboard">
 
-      {/* ✅ HAMBURGER */}
       <button 
         className="menuToggle"
         onClick={()=>setMenuOpen(!menuOpen)}
@@ -112,7 +122,6 @@ export default function History(){
         ☰
       </button>
 
-      {/* ✅ SIDEBAR */}
       <div className={`sidebarWrapper ${menuOpen ? "open" : ""}`}>
         <Sidebar/>
       </div>
@@ -120,6 +129,9 @@ export default function History(){
       <div className="content">
 
         <h1>Ad History</h1>
+
+        {/* 🔥 ERROR */}
+        {error && <div className="toastError">{error}</div>}
 
         {history.length === 0 ?(
 
@@ -141,7 +153,7 @@ export default function History(){
                   {item.imageUrl && (
 
                     <img
-                      src={item.imageUrl}
+                      src={`${API}${item.imageUrl}`}
                       alt="Ad"
                       className="historyImage"
                     />

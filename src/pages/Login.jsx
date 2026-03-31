@@ -3,10 +3,12 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import API from "../config/api";
 import "../styles/auth.css";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
 
   const navigate = useNavigate();
+  const { login: authLogin } = useAuth();
 
   const [email,setEmail] = useState("");
   const [password,setPassword] = useState("");
@@ -25,11 +27,11 @@ export default function Login() {
 
       const res = await axios.post(
         `${API}/auth/login`,
-        { email, password },
-        { withCredentials: true }
+        { email, password }
       );
 
-      localStorage.setItem("user", JSON.stringify(res.data));
+      // 🔥 SAVE USING CONTEXT
+      authLogin(res.data.user, res.data.token);
 
       setLoading(false);
 
